@@ -96,7 +96,95 @@ describe("Sorting", function(){
 			console.table(products);
 		})
 	})
-
 	
 });
+
+describe("Filtering", function(){
+	describe("All products in category 1", function(){
+		function filterCategory1Products(){
+			var result = [];
+			for(var i=0; i<products.length; i++)
+				if (products[i].category === 1)
+					result.push(products[i]);
+			return result;
+		}
+		var category1Products = filterCategory1Products();
+		console.table(category1Products);
+	})
+
+	describe("Any list by any criteria", function(){
+		function filter(list, criteriaFn){
+			var result = [];
+			for(var i=0; i<list.length; i++)
+				if (criteriaFn(list[i]))
+					result.push(list[i]);
+			return result;
+		}
+		function negate(criteria){
+			return function(){
+				return !criteria.apply(this, arguments);
+			};
+		}
+
+		var category2ProductCriteria = function(product){
+			return product.category === 2;
+		};
+		describe("Category 2 products", function(){
+			var category2Products = filter(products, category2ProductCriteria);
+			console.table(category2Products);
+		});
+
+		/*var nonCategory2ProductCriteria = function(product){
+			return product.category !== 2;
+		};*/
+
+		
+		/*var nonCategory2ProductCriteria = function(product){
+			return !category2ProductCriteria(product);
+		};*/
+
+		var nonCategory2ProductCriteria = negate(category2ProductCriteria);
+
+		describe("Non category 2 products", function(){
+			var nonCategory2Products = filter(products, nonCategory2ProductCriteria);
+			console.table(nonCategory2Products);
+		});
+
+		var costlyProductCriteria = function(product){
+			return product.cost > 50;
+		};
+		describe("Costly products [cost > 50]", function(){
+			
+			var costlyProducts = filter(products, costlyProductCriteria);
+			console.table(costlyProducts);
+		})
+		/*var affordableProductCriteria = function(product){
+			return product.cost <= 50;
+		};*/
+		/*var affordableProductCriteria = function(product){
+			return !costlyProductCriteria(product);
+		};*/
+		var affordableProductCriteria = negate(costlyProductCriteria);
+		
+		describe("Affordable products [cost <= 50]", function(){
+			
+			var affordableProducts = filter(products, affordableProductCriteria);
+			console.table(affordableProducts);
+		})
+	})
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
